@@ -2,7 +2,7 @@ Teklab-Automation-Modul - Information
 ========================
 
 Dies ist noch eine unfertige Source, die aber jedenfall immer updatet wird.
-Zurzeit ist aber schon die Node-Verwaltung fertig, die Virtualserververwaltung in Bearbeitung und die Kundenverwaltung fehlt nocht.
+Zurzeit ist aber schon die Node-Verwaltung fertig, die Virtualserververwaltung in Bearbeitung und die Kundenverwaltung fehlt noch.
 
 
 Teklab-Automation-Modul - Installation
