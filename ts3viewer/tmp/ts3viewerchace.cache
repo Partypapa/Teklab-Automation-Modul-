@@ -1,0 +1,17 @@
+<div class="tsstatus">
+	<input type="hidden" id="tsstatus-84-200-10-99-9987-hostport" value="84.200.10.99:9987" />
+	
+	<div class="tsstatusItem tsstatusServer">
+		<a href="javascript:tsstatusconnect('84-200-10-99-9987')"><img src="admin/ownmodules/ts3viewer/img/16x16_server_green.png" />TeamSpeak ]I[ Server</a>
+		<div class="tsstatusItem">
+	<a href="#" data-container="body" class="channelviewer" data-toggle="popover" data-content="Name: Default Channel" title="Channel-ID [1]">
+		<img src="admin/ownmodules/ts3viewer/img/16x16_channel_green.png" />Default Channel
+		<div class="tsstatusFlags">
+			<img src="admin/ownmodules/ts3viewer/img/16x16_default.png" />
+		</div>
+		
+	</a>
+	
+</div>
+	</div>
+</div>

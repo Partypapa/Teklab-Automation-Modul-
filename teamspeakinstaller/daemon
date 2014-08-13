@@ -1,0 +1,322 @@
+#!/bin/sh
+# Daemon codet by Steekarlkani
+
+apiparameter=$1
+nodeimported=$2
+
+teamspeakordner=$3
+teamspeakpassword=$4
+
+backuplink=$5
+backupordner=$6
+backupname=$7
+
+subdomain=$8
+ip=$9
+port=$10
+
+MACHINE_TYPE=`uname -m`
+ts3serverpidcommand=`ps aux | grep "ts3server" | grep -v grep | awk '{ print $2 }' | head -1`
+tsdnsserverpidcommand=`ps aux | grep "tsdnsserver" | grep -v grep | awk '{ print $2 }' | head -1`
+
+case "$apiparameter" in
+  install)
+      if [ ${MACHINE_TYPE} = 'x86_64' ]; then
+          cd /home/user-webi/
+          wget http://dl.4players.de/ts/releases/3.0.10.3/teamspeak3-server_linux-amd64-3.0.10.3.tar.gz
+          sleep 5
+          tar xfv teamspeak3-server_linux-amd64-3.0.10.3.tar.gz
+          sleep 5
+          rm -r teamspeak3-server_linux-amd64-3.0.10.3.tar.gz
+        else
+          cd /home/user-webi/
+          wget http://dl.4players.de/ts/releases/3.0.10.3/teamspeak3-server_linux-x86-3.0.10.3.tar.gz
+          sleep 5
+          tar xfv teamspeak3-server_linux-x86-3.0.10.3.tar.gz
+          sleep 5
+          rm -r teamspeak3-server_linux-x86-3.0.10.3.tar.gz
+      fi
+    ;;
+
+    removeinstance)
+	  if [ -d "/home/user-webi/$teamspeakordner" ]; then
+	    if [ "$nodeimported" = "1" ]; then
+		  cd /home/user-webi
+		  rm -r $teamspeakordner
+	    else
+              if [ ${MACHINE_TYPE} = 'x86_64' ]; then
+                 cd /home/user-webi
+	         rm -r teamspeak3-server_linux-amd64
+              else
+                 cd  /home/user-webi
+                 rm -r teamspeak3-server_linux-x86
+              fi
+	   fi
+       fi
+   ;;
+
+   createipwhitelistfile)
+     if [ "$nodeimported" = "1" ]; then
+        if [ -f /home/user-webi/$teamspeakordner/query_ip_whitelist.txt ]; then
+          echo "$teamspeakpassword" >> /home/user-webi/$teamspeakordner/query_ip_whitelist.txt
+        else
+          echo "$teamspeakpassword" >> /home/user-webi/$teamspeakordner/query_ip_whitelist.txt
+        fi
+     else
+         if [ ${MACHINE_TYPE} = 'x86_64' ]; then
+           if [ -f /home/user-webi/teamspeak3-server-linux-amd64/query_ip_whitelist.txt ]; then
+              echo "$teamspeakpassword" >> /home/user-webi/teamspeak3-server_linux-amd64/query_ip_whitelist.txt
+           else
+              echo "$teamspeakpassword" >> /home/user-webi/teamspeak3-server_linux-amd64/query_ip_whitelist.txt
+           fi
+         else
+            if [ -f /home/user-webi/teamspeak3-server_linux-x86/query_ip_whitelist.txt ]; then
+              echo "$teamspeakpassword" >> /home/user-webi/teamspeak3-server_linux-x86/query_ip_whitelist.txt
+            else
+              echo "$teamspeakpassword" >> /home/user-webi/teamspeak3-server_linux-x86/query_ip_whitelist.txt
+            fi
+         fi
+     fi
+  ;;
+
+  createts3serverini)
+     if [ "$nodeimported" = "1" ]; then
+        for tfile in /home/user-webi/$teamspeakordner/ts3server.ini; do
+          if [ -f $tfile ]; then
+             rm -r $tfile
+             echo "filetransfer_port=$teamspeakpassword" >> $tfile
+             echo "filetransfer_ip=$backuplink" >> $tfile
+             echo "query_port=$backupordner" >> $tfile
+             echo "query_ip=$backupname" >> $tfile
+             echo "query_ip_whitelist=query_ip_whitelist.txt" >> $tfile
+             echo "query_ip_blacklist=query_ip_blacklist.txt" >> $tfile
+           else
+             echo "filetransfer_port=$teamspeakpassword" >> $tfile
+             echo "filetransfer_ip=$backuplink" >> $tfile
+             echo "query_port=$backupordner" >> $tfile
+             echo "query_ip=$backupname" >> $tfile
+             echo "query_ip_whitelist=query_ip_whitelist.txt" >> $tfile
+             echo "query_ip_blacklist=query_ip_blacklist.txt" >> $tfile
+           fi
+       done
+     else
+         if [ ${MACHINE_TYPE} = 'x86_64' ]; then
+            for tfile in /home/user-webi/teamspeak3-server_linux-amd64/ts3server.ini; do
+              if [ -f $tfile ]; then
+                 rm -r $tfile
+                 echo "filetransfer_port=$teamspeakpassword" >> $tfile
+                 echo "filetransfer_ip=$backuplink" >> $tfile
+                 echo "query_port=$backupordner" >> $tfile
+                 echo "query_ip=$backupname" >> $tfile
+                 echo "query_ip_whitelist=query_ip_whitelist.txt" >> $tfile
+                 echo "query_ip_blacklist=query_ip_blacklist.txt" >> $tfile
+               else
+                 echo "filetransfer_port=$backuplink" >> $tfile
+                 echo "filetransfer_ip=$backupordner" >> $tfile
+                 echo "query_port=$backupname" >> $tfile
+                 echo "query_ip=$subdomain" >>  $tfile
+                 echo "query_ip_whitelist=query_ip_whitelist.txt" >> $tfile
+                 echo "query_ip_blacklist=query_ip_blacklist.txt" >> $tfile
+              fi
+            done
+         else
+            for tfile in /home/user-webi/teamspeak3-server_linux-x86/ts3server.ini; do
+              if [ -f $tfile ]; then
+                rm -r $tfile
+                echo "default_voice_port"=$teamspeakpassword >> $tfile
+                echo "voice_ip"=$backuplink >> $tfile
+                echo "filetransfer_port=$backupordner" >> $tfile
+                echo "filetransfer_ip=$backupname" >> $tfile
+                echo "query_port=$subdomain" >> $tfile
+                echo "query_ip=$ip" >>  $tfile
+                echo "query_ip_whitelist=query_ip_whitelist.txt" >> $tfile
+                echo "query_ip_blacklist=query_ip_blacklist.txt" >> $tfile
+              else
+                echo "default_voice_port"=$teamspeakpassword >> $tfile
+                echo "voice_ip"=$backuplink >> $tfile
+                echo "filetransfer_port=$backupordner" >> $tfile
+                echo "filetransfer_ip=$backupname" >> $tfile
+                echo "query_port=$subdomain" >> $tfile
+                echo "query_ip=$ip" >>  $tfile
+                echo "query_ip_whitelist=query_ip_whitelist.txt" >> $tfile
+                echo "query_ip_blacklist=query_ip_blacklist.txt" >> $tfile
+              fi
+            done
+         fi
+     fi
+  ;;
+
+  start)
+     if [ "$nodeimported" = "1" ]; then
+       for tfile in /home/user-webi/$teamspeakordner/ts3server.ini; do
+          if [ -f $tfile ]; then
+             cd /home/user-webi/$teamspeakordner/
+             screen -a -m -d -S ts3server ./ts3server_minimal_runscript.sh start inifile=ts3server.ini serveradmin_password=$teamspeakpassword
+           else
+             cd /home/user-webi/$teamspeakordner/
+             screen -a -m -d -S ts3server ./ts3server_minimal_runscript.sh start createinifile=1 serveradmin_password=$teamspeakpassword
+           fi
+       done
+	 else
+	   if [ ${MACHINE_TYPE} = 'x86_64' ]; then
+             for tfile in /home/user-webi/teamspeak3-server_linux-amd64/ts3server.ini; do
+               if [ -f $tfile ]; then
+                 cd /home/user-webi/teamspeak3-server_linux-amd64/
+                 screen -a -m -d -S ts3server ./ts3server_minimal_runscript.sh start inifile=ts3server.ini serveradmin_password=$teamspeakpassword
+              else
+                 cd /home/user-webi/teamspeak3-server_linux-amd64/
+                 screen -a -m -d -S ts3server ./ts3server_minimal_runscript.sh start createinifile=1 serveradmin_password=$teamspeakpassword
+              fi
+            done
+          else
+             for tfile in /home/user-webi/teamspeak3-server_linux-x86/ts3server.ini; do  
+               if [ -f $tfile ]; then
+		 cd /home/user-webi/teamspeak3-server_linux-x86/
+	         screen -a -m -d -S ts3server ./ts3server_minimal_runscript.sh start inifile=ts3server.ini serveradmin_password=$teamspeakpassword
+               else
+	         cd /home/user-webi/teamspeak3-server_linux-x86/
+	         screen -a -m -d -S ts3server ./ts3server_minimal_runscript.sh start createinifile=1 serveradmin_password=$teamspeakpassword
+              fi
+             done
+          fi
+      fi
+  ;;
+
+  restart)
+        if [ "$nodeimported" = "1" ]; then
+       for tfile in /home/user-webi/$teamspeakordner/ts3server.ini; do
+          if [ -f $tfile ]; then
+             cd /home/user-webi/$teamspeakordner/
+             screen -a -m -d -S ts3server ./ts3server_minimal_runscript.sh restart inifile=ts3server.ini serveradmin_password=$teamspeakpassword
+           else
+             cd /home/user-webi/$teamspeakordner/
+             screen -a -m -d -S ts3server ./ts3server_minimal_runscript.sh restart createinifile=1 serveradmin_password=$teamspeakpassword
+           fi
+       done
+         else
+           if [ ${MACHINE_TYPE} = 'x86_64' ]; then
+             for tfile in /home/user-webi/teamspeak3-server_linux-amd64/ts3server.ini; do
+               if [ -f $tfile ]; then
+                 cd /home/user-webi/teamspeak3-server_linux-amd64/
+                 screen -a -m -d -S ts3server ./ts3server_minimal_runscript.sh restart inifile=ts3server.ini serveradmin_password=$teamspeakpassword
+              else
+                 cd /home/user-webi/teamspeak3-server_linux-amd64/
+                 screen -a -m -d -S ts3server ./ts3server_minimal_runscript.sh restart createinifile=1 serveradmin_password=$teamspeakpassword
+              fi
+            done
+          else
+             for tfile in /home/user-webi/teamspeak3-server_linux-x86/ts3server.ini; do
+               if [ -f $tfile ]; then
+                 cd /home/user-webi/teamspeak3-server_linux-x86/
+                 screen -a -m -d -S ts3server ./ts3server_minimal_runscript.sh restart inifile=ts3server.ini serveradmin_password=$teamspeakpassword
+               else
+                 cd /home/user-webi/teamspeak3-server_linux-x86/
+                 screen -a -m -d -S ts3server ./ts3server_minimal_runscript.sh restart createinifile=1 serveradmin_password=$teamspeakpassword
+              fi
+             done
+          fi
+      fi
+  ;;
+
+  stop)
+       if [ "$ts3serverpidcommand" = "" ]; then
+          echo Instance läuft nicht mehr
+       else
+          kill $ts3serverpidcommand
+       fi
+  ;;
+
+  tsdnseintrag)
+     if [ "$nodeimported" = "1" ]; then
+        cd /home/user-webi/$teamspeakordner/tsdns
+        rm -r README
+        rm -r USAGE
+        rm -r tsdns_settings.ini.sample
+        echo "$teamspeakpassword=$backuplink:$backupordner" >> tsdns_settings.ini
+     else
+        if [ ${MACHINE_TYPE} = 'x86_64' ]; then
+          cd /home/user-webi/teamspeak3-server_linux-amd64/tsdns
+          rm -r README
+          rm -r USAGE
+          rm -r tsdns_settings.ini.sample
+          echo "$teamspeakpassword=$backuplink:$backupordner" >> tsdns_settings.ini
+         else
+          cd /home/user-webi/teamspeak3-server_linux-x86/tsdns
+          rm -r README
+          rm -r USAGE
+          rm -r tsdns_settings.ini.sample
+          echo "$teamspeakpassword=$backuplink:$backupordner" >> tsdns_settings.ini
+         fi
+     fi
+  ;;
+
+  removeintrag)
+     if [ "$nodeimported" = "1" ]; then
+        cd /home/user-webi/$teamspeakordner/tsdns
+        grep -v $teamspeakpassword tsdns_settings.ini > tempdatei.txt
+        mv tempdatei.txt tsdns_settings.ini 
+     else
+        if [ ${MACHINE_TYPE} = 'x86_64' ]; then
+           cd /home/user-webi/teamspeak3-server_linux-amd64/tsdns
+           grep -v $teamspeakpassword tsdns_settings.ini > tempdatei.txt
+           mv tempdatei.txt tsdns_settings.ini
+         else
+           cd /home/user-webi/teamspeak3-server_linux-x86/tsdns
+           grep -v $teamspeakpassword tsdns_settings.ini > tempdatei.txt
+           mv tempdatei.txt tsdns_settings.ini
+         fi
+     fi
+  ;;
+
+  tsdnsstart)
+      if [ "$nodeimported" = "1" ]; then
+           if [ ${MACHINE_TYPE} = 'x86_64' ]; then
+              cd /home/user-webi/$teamspeakordner/tsdns
+              screen -a -m -d -S tsdnsserver ./tsdnsserver_linux_amd64
+           else
+              cd /home/user-webi/$teamspeakordner/tsdns
+              screen -a -m -d -S tsdnsserver ./tsdnsserver_linux_x86 
+           fi
+      else
+           if [ ${MACHINE_TYPE} = 'x86_64' ]; then
+              cd /home/user-webi/teamspeak3-server_linux-amd64/tsdns
+              screen -a -m -d -S tsdnsserver ./tsdnsserver_linux_amd64
+           else
+              cd /home/user-webi/teamspeak3-server_linux-x86/tsdns
+              screen -a -m -d -S tsdnsserver ./tsdnsserver_linux_x86
+           fi
+      fi
+   ;;
+
+   tsdnstop)
+      if [ "$tsdnsserverpidcommand" = "" ]; then
+         echo Instance läuft nicht mehr
+      else
+         kill $tsdnsserverpidcommand
+      fi
+   ;;
+
+   tsdnsrestart)
+      if [ "$nodeimported" = "1" ]; then
+           if [ ${MACHINE_TYPE} = 'x86_64' ]; then
+              cd /home/user-webi/$teamspeakordner/tsdns
+              screen -a -m -d -S tsdnsserver ./tsdnsserver_linux_amd64
+           else
+              cd /home/user-webi/$teamspeakordner/tsdns
+              screen -a -m -d -S tsdnsserver ./tsdnsserver_linux_x86
+           fi
+      else
+           if [ ${MACHINE_TYPE} = 'x86_64' ]; then
+              cd /home/user-webi/teamspeak3-server_linux-amd64/tsdns
+              screen -a -m -d -S tsdnsserver ./tsdnsserver_linux_amd64
+           else
+              cd /home/user-webi/teamspeak3-server_linux-x86/tsdns
+              screen -a -m -d -S tsdnsserver ./tsdnsserver_linux_x86
+           fi
+      fi
+   ;;
+
+  *)
+  ;;
+esac
+exit 0
