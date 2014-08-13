@@ -11,9 +11,7 @@ Teklab-Automation-Modul - Installation
 Wie kann ich einen Node hinzufügen, als erstes muss du denn Daemon herunterladen der für die Verwaltung gebraucht wird.
 Das Modul unterstützt zurzeit nur Debian Squeeze, und Debian Wheezy der Rest wird nicht unterstützt!
 
-wget http://tekbase.gti7.de/admin/ownmodules/teamspeakinstaller/installer.sh &&
-chmod 0777 installer.sh &&
-./installer.sh 
+wget http://tekbase.gti7.de/admin/ownmodules/teamspeakinstaller/installer.sh && chmod 0777 installer.sh && ./installer.sh 
 
 Danach kannst du das Modul im Webinterface hochladen, und es ist startbereit!
 
